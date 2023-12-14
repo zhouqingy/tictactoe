@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>井字棋</title>
+    <style>
+        table {
+            margin-top: 20%;
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%);
+            border-collapse: collapse
+        }
+        table td{
+            border: 2px solid black;
+            width: 100px;
+            height: 100px;
+            color: black;
+            font-size: 30px;
+            text-align: center;
+        }
+        table tr:first-child td{
+            border-top: 0;
+        }
+        table td:first-child{
+            border-left: 0;
+        }
+        table tr:last-child td{
+            border-bottom: 0;
+        }
+        table td:last-child{
+            border-right: 0;
+        }
+
+    </style>
+
+</head>
+<body>
+    <table>
+        <tr>
+            <td id="0"></td>
+            <td id="1"></td>
+            <td id="2"></td>
+        </tr>
+        <tr>
+            <td id="3"></td>
+            <td id="4"></td>
+            <td id="5"></td>
+        </tr>
+        <tr>
+            <td id="6"></td>
+            <td id="7"></td>
+            <td id="8"></td>
+        </tr>
+    </table>
+    <script type="text/javascript">
+        var firstPerson = {
+            style: 'o',
+            record: [],
+            name:'firstPerson'
+        };
+        var secondPerson = {
+            style:'x',
+            record: [],
+            name:'secondPerson'
+        };
+        var choosePerson = true;
+        var listNum = document.querySelectorAll('td')
+        var logNum = 0
+        var noUseCell = [0,1,2,3,4,5,6,7,8]
+        var winRules = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        linkstart()
+        function linkstart(){
+            for(var i = 0;i < listNum.length; i++){
+                listNum[i].innerHTML = ''
+                listNum[i].addEventListener('click',clickEvent,false)
+            }
+        }
+        function clickEvent(e){
+            if(typeof noUseCell[e.target.id] =='number'){
+                logNum ++
+                if(choosePerson == true){
+                    firstPerson.record.push(e.target.id)
+                    personPlay(e.target.id,firstPerson)
+                    choosePerson = false
+                }else{
+                    secondPerson.record.push(e.target.id)
+                    personPlay(e.target.id,secondPerson)
+                    choosePerson = true
+                }
+            }
+
+        }
+        function personPlay(id,person){
+            document.getElementById(id).innerHTML = person.style
+            noUseCell[id] = person.style
+            if(logNum>=5){
+                if(whoWin(person.record) == true){
+                    confirm("玩家"+person.name+"取得胜利")
+                    for(var i = 0;i < listNum.length;i++){
+                        listNum[i].removeEventListener('click',clickEvent,false)
+                    }
+                }else if(logNum == 9){
+                    confirm("平局")
+                }
+            }
+
+        }
+        function whoWin(record){
+            return winRules.some((item) =>{
+                //console.log(item,person)
+                return isInclude(item,record)
+            })
+        }
+        function isInclude(item,record){
+            // console.log(item)
+            // console.log(person)
+            return item.every((it)=>{
+                return record.some((element)=>{
+                   return element == it
+                })
+            })
+        }
+    </script>
+</body>
+</html>
